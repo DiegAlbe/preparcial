@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-parcial · Economía General y Familiar</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f4f0;color:#1a1a1a;padding:2rem 1rem;line-height:1.6}
+  .container{max-width:720px;margin:0 auto}
+  .header{background:#fff;border:1px solid #e0e0d8;border-radius:12px;padding:1.5rem 2rem;margin-bottom:1.5rem;border-left:4px solid #4a6cf7}
+  .header h1{font-size:20px;font-weight:600;color:#1a1a1a;margin-bottom:4px}
+  .header p{font-size:13px;color:#666;margin-bottom:10px}
+  .badges{display:flex;gap:8px;flex-wrap:wrap}
+  .badge{font-size:12px;padding:3px 10px;border-radius:20px;font-weight:500}
+  .badge-blue{background:#e8edff;color:#3050c0}
+  .badge-green{background:#e8f5e9;color:#2e7d32}
+  .badge-orange{background:#fff3e0;color:#e65100}
+  .q-block{background:#fff;border:1px solid #e0e0d8;border-radius:12px;padding:1.5rem 2rem;margin-bottom:1rem}
+  .q-num{font-size:11px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+  .q-text{font-size:15px;font-weight:600;color:#1a1a1a;line-height:1.6;margin-bottom:14px}
+  .options{display:flex;flex-direction:column;gap:8px}
+  .opt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border:1px solid #e0e0d8;border-radius:8px;cursor:pointer;font-size:14px;color:#444;line-height:1.5;transition:all .15s;user-select:none}
+  .opt:hover{background:#f7f7f5;border-color:#bbb}
+  .opt.selected{background:#eef2ff;border-color:#4a6cf7;color:#3050c0}
+  .opt.correct{background:#e8f5e9;border-color:#43a047;color:#1b5e20}
+  .opt.incorrect{background:#ffebee;border-color:#e53935;color:#7f0000}
+  .opt-letter{font-weight:700;min-width:20px;margin-top:1px}
+  .exp{display:none;font-size:13px;color:#555;margin-top:10px;padding:10px 14px;background:#f9f9f7;border-radius:8px;line-height:1.6;border-left:3px solid #4a6cf7}
+  .exp strong{color:#3050c0}
+  .case-label{font-size:11px;font-weight:700;color:#e65100;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+  .case-box{background:#fff8f0;border:1px solid #ffe0b2;border-radius:8px;padding:1rem 1.25rem;margin-bottom:14px}
+  .case-box p{font-size:14px;color:#333;line-height:1.75}
+  .consigna{font-size:14px;color:#555;line-height:1.7;margin-bottom:12px;font-style:italic;padding:10px 14px;background:#f4f4f0;border-radius:8px}
+  textarea{width:100%;min-height:180px;font-size:14px;color:#1a1a1a;background:#fafafa;border:1px solid #e0e0d8;border-radius:8px;padding:12px;resize:vertical;font-family:inherit;line-height:1.7}
+  textarea:focus{outline:none;border-color:#4a6cf7;background:#fff}
+  .divider{border:none;border-top:1px solid #e0e0d8;margin:1.5rem 0}
+  .btn-row{margin-top:1rem;display:flex;gap:12px;flex-wrap:wrap}
+  .btn{padding:11px 22px;font-size:14px;font-weight:600;border-radius:8px;cursor:pointer;transition:all .15s}
+  .btn-primary{background:#4a6cf7;color:#fff;border:none}
+  .btn-primary:hover{background:#3050c0}
+  .btn-reset{background:#fff;color:#666;border:1px solid #e0e0d8}
+  .btn-reset:hover{background:#f4f4f0}
+  .results{display:none;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:12px;padding:1.25rem 2rem;margin-top:1rem;text-align:center}
+  .results h2{font-size:24px;font-weight:700;color:#1b5e20}
+  .results p{font-size:14px;color:#2e7d32;margin-top:6px}
+  @media(max-width:600px){
+    body{padding:1rem .75rem}
+    .q-block{padding:1.25rem 1.25rem}
+    .header{padding:1.25rem 1.25rem}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>Pre-parcial · Economía General y Familiar</h1>
+  <p>Licenciatura en Nutrición · Segundo Año · Prof. Lic. Diego Albeira · 2025-2026</p>
+  <div class="badges">
+    <span class="badge badge-blue">9 preguntas de opción múltiple</span>
+    <span class="badge badge-green">1 pregunta de reflexión</span>
+    <span class="badge badge-orange">Unidades 1, 2 y 3</span>
+  </div>
+</div>
+
+<div id="quiz"></div>
+
+<div class="btn-row">
+  <button class="btn btn-primary" onclick="corregir()">✓ Corregir múltiple opción</button>
+  <button class="btn btn-reset" onclick="reiniciar()">↺ Reiniciar</button>
+</div>
+
+<div class="results" id="results">
+  <h2 id="score-text"></h2>
+  <p id="score-sub"></p>
+</div>
+
+</div>
+<script>
+const preguntas=[
+  {num:1,texto:"Según Patricia Aguirre, las estrategias de consumo de los hogares pobres son principalmente:",opts:["Errores producto de la ignorancia o falta de educación alimentaria","Una racionalidad económica de supervivencia ante limitaciones reales de ingreso","Consecuencia de malos hábitos culturales transmitidos entre generaciones","Decisiones irracionales que el nutricionista debe corregir mediante información"],correcta:1,exp:"Aguirre plantea que las estrategias de consumo no son errores ni ignorancia: son prácticas racionales de supervivencia que permiten a las familias comer todos los días con los recursos disponibles."},
+  {num:2,texto:"El concepto de 'hambre oculta' o 'hambre silenciosa' refiere a:",opts:["La sensación de vacío estomacal que experimenta una persona en situación de indigencia","La deficiencia de micronutrientes sin sensación de hambre, generada por alimentos que sacian pero no nutren","El ocultamiento estadístico de los datos de malnutrición por parte del Estado","La desnutrición aguda que genera pérdida de peso visible en niños y adultos"],correcta:1,exp:"El hambre oculta ocurre cuando los alimentos rendidores (pan, fideos, papa) generan saciedad estomacal pero no cubren los requerimientos de hierro, calcio, zinc y vitaminas, produciendo anemia, baja talla y vulnerabilidad inmunitaria."},
+  {num:3,texto:"El 'gordo de carencia' que describe Aguirre es un cuerpo que presenta:",opts:["Obesidad por consumo excesivo de alimentos de alta densidad nutritiva","Sobrepeso paradójico resultado de una dieta hipercalórica pero hipo-nutritiva en micronutrientes","Desnutrición aguda con pérdida de masa muscular y tejido adiposo","Obesidad producida exclusivamente por sedentarismo y baja actividad física"],correcta:1,exp:"El gordo de carencia es la expresión corporal de una dieta basada en hidratos de carbono simples y grasas baratas: el cuerpo acumula calorías pero está débil, cansado, con anemia y baja talla, porque carece de micronutrientes esenciales."},
+  {num:4,texto:"En la cadena de valor de un tomate con precio al consumidor de $2.000, ¿qué porcentaje recibe el productor primario según el ejemplo trabajado en clase?",opts:["50% del precio final","30% del precio final","17% del precio final","65% del precio final"],correcta:2,exp:"El productor recibe solo $350 de cada $2.000, es decir el 17% del precio final. El 83% restante se distribuye entre el acopiador/flete, el mayorista y el supermercado."},
+  {num:5,texto:"La diferencia central entre Seguridad Alimentaria y Soberanía Alimentaria radica en que:",opts:["La seguridad alimentaria es un concepto más moderno y superador de la soberanía","La soberanía alimentaria exige el derecho de los pueblos a definir sus propias políticas alimentarias, mientras que la seguridad se centra en garantizar el acceso al consumo","Ambos conceptos son equivalentes y pueden usarse de manera intercambiable","La seguridad alimentaria incluye la dimensión política y cultural que la soberanía ignora"],correcta:1,exp:"Según Vía Campesina y Gorban, la soberanía alimentaria cuestiona el modelo de producción (quién decide, cómo y para quién), mientras que la seguridad alimentaria puede lograrse incluso mediante el agronegocio y la importación, sin garantizar soberanía sobre el sistema alimentario."},
+  {num:6,texto:"La 'autoexplotación' como estrategia de consumo se refiere, según Aguirre, a:",opts:["La práctica de producir alimentos en huertas domésticas para abaratar costos","El trabajo extra que hacen las mujeres del hogar (cocinar, amasar, comer menos) para sostener la alimentación familiar","La decisión de los hijos mayores de aportar ingresos al hogar a edades tempranas","El pluriempleo del padre o jefe de hogar para maximizar el ingreso familiar"],correcta:1,exp:"La autoexplotación es una estrategia invisible: la madre trabaja más dentro del hogar, ahorrando dinero mediante el trabajo doméstico (amasar pan, cocinar desde cero), y come menos —'me como las sobras'— para que coman primero los hijos."},
+  {num:7,texto:"Desde la perspectiva de Keynes aplicada a las políticas alimentarias argentinas, la Tarjeta Alimentar sería:",opts:["Una distorsión del mercado que genera dependencia y debe eliminarse","Una intervención estatal legítima para sostener el consumo de las familias ante el fallo del mercado","Una medida contraria a la mano invisible que perjudica la eficiencia económica","Una política innecesaria porque el mercado corregirá solo las inequidades alimentarias"],correcta:1,exp:"Keynes plantea que el mercado falla y el Estado debe intervenir para sostener el consumo y el bienestar. Programas como la Tarjeta Alimentar son la aplicación concreta de este enfoque: transferencias directas que permiten a las familias acceder a alimentos cuando el mercado no garantiza ese acceso."},
+  {num:8,texto:"Un circuito corto de comercialización (CCC) se define principalmente por:",opts:["La cercanía geográfica entre el productor y el consumidor, sin importar los intermediarios","La reducción o eliminación de intermediarios entre productor y consumidor, no necesariamente por la distancia física","La venta exclusiva de productos orgánicos y agroecológicos certificados","La participación del Estado como intermediario solidario entre productor y consumidor"],correcta:1,exp:"El CCC se define por la cantidad de intermediarios (ninguno o uno máximo), no por la distancia geográfica. Una venta directa por WhatsApp a otra provincia puede ser un CCC, mientras que una feria con varios revendedores puede no serlo."},
+  {num:9,texto:"La paradoja 'fracasan al triunfar' de Aguirre significa que las estrategias de consumo de los hogares pobres:",opts:["Son exitosas porque logran que la familia coma todos los días, pero fracasan porque la dieta resultante es nutricionalmente inadecuada","Son un fracaso total porque no logran ni siquiera cubrir el hambre física de los integrantes del hogar","Triunfan nutricionalmente pero fracasan económicamente al generar gastos superiores al ingreso","Son irracionales desde el punto de vista económico aunque parezcan funcionales en el corto plazo"],correcta:0,exp:"Las estrategias logran su objetivo inmediato: nadie se muere de hambre, todos comen algo cada día. Pero el costo oculto es que la dieta es monótona, rica en carbohidratos simples y pobre en micronutrientes, instalando la desnutrición crónica y el hambre oculta."}
+];
+
+function buildQuiz(){
+  const c=document.getElementById('quiz');
+  c.innerHTML='';
+  preguntas.forEach((q,i)=>{
+    const d=document.createElement('div');
+    d.className='q-block';
+    d.innerHTML=`<div class="q-num">Pregunta ${q.num} de 9 &middot; Opción múltiple</div>
+    <div class="q-text">${q.texto}</div>
+    <div class="options" id="opts-${i}">
+      ${q.opts.map((o,j)=>`<div class="opt" data-q="${i}" data-o="${j}" onclick="seleccionar(${i},${j})"><span class="opt-letter">${['A','B','C','D'][j]}.</span><span>${o}</span></div>`).join('')}
+    </div>
+    <div class="exp" id="exp-${i}"><strong>Respuesta correcta:</strong> ${q.exp}</div>`;
+    c.appendChild(d);
+  });
+
+  const hr=document.createElement('hr');
+  hr.className='divider';
+  c.appendChild(hr);
+
+  const r=document.createElement('div');
+  r.className='q-block';
+  r.innerHTML=`<div class="q-num">Pregunta 10 de 10 &middot; Reflexión integradora</div>
+  <div class="q-text">Análisis de caso: Valeria</div>
+  <div class="case-box">
+    <div class="case-label">Caso clínico-social</div>
+    <p>Valeria tiene 32 años y vive en un barrio periférico de Concepción del Uruguay con sus tres hijos (8, 5 y 2 años). Su ingreso mensual proviene de la Tarjeta Alimentar ($80.000), una changa de limpieza dos veces por semana ($60.000) y la ayuda esporádica de su madre. El supermercado más cercano está a 8 cuadras; la feria franca del productor se realiza los sábados a 25 cuadras. Valeria cocina todos los días: guisos de fideos, arroz con tapa de asado cuando puede, pan casero. Casi nunca compra frutas ("son caras y los chicos no las quieren") ni lácteos ("la leche dura poco y sale cara"). El hijo mayor tiene diagnóstico de anemia ferropriva y el menor baja talla para su edad. Cuando vas a su casa a hacer una visita domiciliaria, Valeria te dice: "Yo sé que no los alimento bien, pero hago lo que puedo".</p>
+  </div>
+  <div class="consigna">
+    <strong>Consigna integradora (mínimo 20 líneas):</strong><br><br>
+    1. Identificá al menos tres estrategias de consumo que Valeria está utilizando según el marco de Patricia Aguirre. Explicá por qué son racionales en su contexto.<br><br>
+    2. Analizá los signos de hambre oculta presentes en el caso y vinculálos con la dieta que describe Valeria.<br><br>
+    3. Reflexioná: ¿qué limitaciones tendría una intervención nutricional basada solo en educación alimentaria con esta familia? ¿Qué otros determinantes deberías considerar?<br><br>
+    4. ¿Qué recursos del sistema alimentario local (políticas alimentarias, circuitos cortos, programas) podrías articular en tu intervención como futura/o nutricionista?
+  </div>
+  <textarea placeholder="Escribí tu respuesta aquí..." id="reflexion-text"></textarea>`;
+  c.appendChild(r);
+}
+
+const selecciones={};
+function seleccionar(q,o){
+  selecciones[q]=o;
+  document.querySelectorAll(`#opts-${q} .opt`).forEach(el=>el.classList.remove('selected'));
+  document.querySelector(`#opts-${q} [data-o="${o}"]`).classList.add('selected');
+}
+
+function corregir(){
+  let correctas=0;
+  preguntas.forEach((q,i)=>{
+    const sel=selecciones[i];
+    const opts=document.querySelectorAll(`#opts-${i} .opt`);
+    opts.forEach(el=>el.classList.remove('selected','correct','incorrect'));
+    if(sel===undefined){
+      opts[q.correcta].classList.add('correct');
+    } else {
+      if(sel===q.correcta){opts[sel].classList.add('correct');correctas++;}
+      else{opts[sel].classList.add('incorrect');opts[q.correcta].classList.add('correct');}
+    }
+    document.getElementById(`exp-${i}`).style.display='block';
+  });
+  const res=document.getElementById('results');
+  res.style.display='block';
+  const pct=Math.round(correctas/9*100);
+  document.getElementById('score-text').textContent=`${correctas}/9 correctas · ${pct}%`;
+  const msgs=['Repasá las clases antes del parcial.','Vas bien, reforzá los conceptos de Aguirre y cadena de valor.','Muy bien, revisá los errores y estarás listo/a.','Excelente dominio de los contenidos.'];
+  document.getElementById('score-sub').textContent=msgs[correctas<=3?0:correctas<=5?1:correctas<=7?2:3];
+  res.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function reiniciar(){
+  Object.keys(selecciones).forEach(k=>delete selecciones[k]);
+  document.getElementById('results').style.display='none';
+  buildQuiz();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+buildQuiz();
+</script>
+</body>
+</html>
